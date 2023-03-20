@@ -1,22 +1,30 @@
-import { takeEvery, put, call, fork, all } from '@redux-saga/core/effects';
-import { GET_NEWS } from '../constants';
+import { takeEvery, put, call, fork, all, spawn } from '@redux-saga/core/effects';
+import { GET_NEWS, SET_LATEST_NEWS_ERROR, SET_POPULAR_NEWS_ERROR } from '../constants';
 import { getLatestNews, getPopularNews } from '../../api';
 import { setLatestNews, setPopularNews } from '../actions/actionsCreator';
 
 export function* handleLatestNews() {
-  const { hits } = yield call(getLatestNews, 'react');
-  yield put(setLatestNews(hits));
+  try {
+    const { hits } = yield call(getLatestNews, 'react');
+    yield put(setLatestNews(hits));
+  } catch (error) {
+    yield put({ type: SET_LATEST_NEWS_ERROR, payload: 'Error fetching latest news' });
+  }
 }
 
 export function* handlePopularNews() {
-  const { hits } = yield call(getPopularNews); // call ждет пока promise вернет resolve
-  yield put(setPopularNews(hits));
+  try {
+    const { hits } = yield call(getPopularNews); // call ждет пока promise вернет resolve
+    yield put(setPopularNews(hits));
+  } catch (error) {
+    yield put({ type: SET_POPULAR_NEWS_ERROR, payload: 'Error fetching popular news' });
+  }
 }
 
 export function* handleNews() {
-  // yield fork(handleLatestNews); // fork не является блокирующим эффектом, поэтому выполнит handleLatestNews и handlePopularNews одновременно
-  // yield fork(handlePopularNews);
-  yield all([call(handleLatestNews), call(handlePopularNews)]);
+  yield fork(handleLatestNews); // fork не является блокирующим эффектом, поэтому выполнит handleLatestNews и handlePopularNews одновременно
+  yield fork(handlePopularNews);
+  // yield all([call(handleLatestNews), call(handlePopularNews)]);
 }
 
 export function* watchClickSaga() {
