@@ -2,15 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import LatestNews from './pages/latest-news/latest-news';
+import PopularNews from './pages/popular-news/popular-news';
+import Home from './pages/home/home';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App>
+          <Routes>
+            <Route index path='/' element={<Home />} />
+            <Route path='/latest-news' element={<LatestNews />} />
+            <Route path='/popular-news' element={<PopularNews />} />
+            <Route path='*' element={<Navigate to='/' replace />} />
+          </Routes>
+        </App>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
 );
