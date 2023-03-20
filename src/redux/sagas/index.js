@@ -1,15 +1,26 @@
-import { takeEvery, put, call } from '@redux-saga/core/effects';
-import { GET_LATEST_NEWS } from '../constants';
-import { getLatestNews } from '../../api';
-import { setLatestNews } from '../actions/actionsCreator';
+import { takeEvery, put, call, fork, all } from '@redux-saga/core/effects';
+import { GET_NEWS } from '../constants';
+import { getLatestNews, getPopularNews } from '../../api';
+import { setLatestNews, setPopularNews } from '../actions/actionsCreator';
 
 export function* handleLatestNews() {
-  const { hits } = yield call(getLatestNews, 'react'); // call  - останавливает сагу до тех пор пока не будет promise resolve
+  const { hits } = yield call(getLatestNews, 'react');
   yield put(setLatestNews(hits));
 }
 
+export function* handlePopularNews() {
+  const { hits } = yield call(getPopularNews); // call ждет пока promise вернет resolve
+  yield put(setPopularNews(hits));
+}
+
+export function* handleNews() {
+  // yield fork(handleLatestNews); // fork не является блокирующим эффектом, поэтому выполнит handleLatestNews и handlePopularNews одновременно
+  // yield fork(handlePopularNews);
+  yield all([call(handleLatestNews), call(handlePopularNews)]);
+}
+
 export function* watchClickSaga() {
-  yield takeEvery(GET_LATEST_NEWS, handleLatestNews); // take ждет вызов actionа INCREASE_COUNT, чтобы выполнить код, который ниже. take - блокирующий эффект который следит за экшеном. И разблокирует вызов следующего кода, если вызов этого экшена произойдет
+  yield takeEvery(GET_NEWS, handleNews); // take ждет вызов actionа INCREASE_COUNT, чтобы выполнить код, который ниже. take - блокирующий эффект который следит за экшеном. И разблокирует вызов следующего кода, если вызов этого экшена произойдет
 }
 
 export default function* rootSaga() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getLatestNews } from './redux/actions/actionsCreator';
+import { getNews } from './redux/actions/actionsCreator';
 import News from './components/news/news';
 
 const App = () => {
@@ -9,7 +9,7 @@ const App = () => {
   const popularNews = useSelector((state) => state.news?.popularNews || []);
 
   const handleNews = () => {
-    dispatch(getLatestNews());
+    dispatch(getNews());
   };
 
   return (

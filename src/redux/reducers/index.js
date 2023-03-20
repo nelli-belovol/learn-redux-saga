@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import counter from './counter';
-import news from './new';
 
-const reducer = combineReducers({ counter, news });
+import news from './news';
+
+const reducer = combineReducers({ news });
 
 export default reducer;
