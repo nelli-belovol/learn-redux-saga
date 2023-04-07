@@ -26,26 +26,15 @@ export function* handlePopularNews() {
   }
 }
 
-// export function* handleNews() {
-//   yield fork(handleLatestNews); // fork не является блокирующим эффектом, поэтому выполнит handleLatestNews и handlePopularNews одновременно
-//   yield fork(handlePopularNews);
-//   // yield all([call(handleLatestNews), call(handlePopularNews)]);
-// }
-
-// export function* watchClickSaga() {
-//   yield takeEvery(GET_NEWS, handleNews); // take ждет вызов actionа INCREASE_COUNT, чтобы выполнить код, который ниже. take - блокирующий эффект который следит за экшеном. И разблокирует вызов следующего кода, если вызов этого экшена произойдет
-// }
-
 export function* watchPopularSaga() {
   yield takeEvery(GET_POPULAR_NEWS, handlePopularNews);
 }
 
 export function* watchLatestSaga() {
-  yield takeEvery(GET_LATEST_NEWS, handleLatestNews);
+  yield takeEvery(GET_LATEST_NEWS, handleLatestNews); // take ждет вызов actionа INCREASE_COUNT, чтобы выполнить код, который ниже. take - блокирующий эффект который следит за экшеном. И разблокирует вызов следующего кода, если вызов этого экшена произойдет
 }
 
 export default function* rootSaga() {
-  // yield watchClickSaga(); // когда загрузится приложение, произойдет инициализация редакс стора, в мидлваре будет создана корневая сага rootSaga, которая в свою очередь вызовет watchClickSaga
-
-  yield all([fork(watchPopularSaga), fork(watchLatestSaga)]);
+  // когда загрузится приложение, произойдет инициализация редакс стора, в мидлваре будет создана корневая сага rootSaga, которая в свою очередь вызовет watchClickSaga
+  yield all([fork(watchPopularSaga), fork(watchLatestSaga)]); // fork не является блокирующим эффектом, поэтому выполнит handleLatestNews и handlePopularNews одновременно
 }
